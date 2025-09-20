@@ -20,7 +20,7 @@ export default function QuickAddTask() {
       duration: t.duration,
     }));
 
-    // Still use AI to enrich each individual task
+    // Use AI to enrich each individual task description
     const [predictionResult, categoryResult] = await Promise.all([
       personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
       categorizeTask({ description: taskDesc }),
@@ -42,7 +42,7 @@ export default function QuickAddTask() {
     setIsAdding(true);
     
     try {
-      // **FIX:** Removed faulty AI parser. Manually split by newlines.
+      // **THE FIX**: Removed faulty AI parser. Manually split by newlines. No exceptions.
       const taskDescriptions = trimmedInput.split('\n').filter(line => line.trim() !== '');
 
       // Process each description individually.
