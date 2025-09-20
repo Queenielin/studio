@@ -29,11 +29,16 @@ const prompt = ai.definePrompt({
   name: 'decomposeLargeTaskPrompt',
   input: {schema: DecomposeLargeTaskInputSchema},
   output: {schema: DecomposeLargeTaskOutputSchema},
-  prompt: `You are a task management expert. Your job is to decompose large tasks into smaller, manageable sub-tasks that can be completed in 15-minute, 30-minute, or 1-hour blocks.
+  prompt: `You are a task management expert. Your job is to decompose large tasks into smaller, manageable sub-tasks.
+
+Follow these rules:
+1. Each sub-task MUST be designed to be completed in a 15-minute, 30-minute, or 1-hour block.
+2. If a task naturally takes more than 1 hour, split it into sequential 1-hour sessions (e.g., "Block 1: Outline", "Block 2: Draft Intro").
+3. Be specific and give detailed instructions for each subtask.
 
 Task: {{{task}}}
 
-Decompose the task into a list of sub-tasks. Return the list of sub-tasks as a JSON array of strings. Be specific and give detailed instructions for each subtask.
+Decompose the task into a list of sub-tasks.
 `,
 });
 
