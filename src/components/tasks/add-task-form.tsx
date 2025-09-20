@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTasks } from "@/hooks/use-tasks";
-import { TaskCategory, TaskDuration, TaskType } from "@/lib/types";
+import { TaskCategory, TaskDuration, TaskType, Task } from "@/lib/types";
 import { categorizeTask, personalizeTaskPredictions } from "@/lib/actions";
 import { Loader2, Wand2 } from "lucide-react";
 
@@ -94,8 +94,7 @@ export function AddTaskForm({ setDialogOpen }: AddTaskFormProps) {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const newTask = {
-      id: new Date().getTime().toString(),
+    const newTask: Omit<Task, 'id'> = {
       ...values,
       isCompleted: false,
     };

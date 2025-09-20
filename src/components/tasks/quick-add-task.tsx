@@ -23,7 +23,7 @@ export default function QuickAddTask() {
 
       if (parsedTasks && parsedTasks.length > 0) {
         const newTasks = await Promise.all(
-          parsedTasks.map(async (taskDesc) => {
+          parsedTasks.map(async (taskDesc, index) => {
             const historicalData = state.tasks.map((t) => ({
               taskDescription: t.description,
               taskType: t.type,
@@ -35,8 +35,7 @@ export default function QuickAddTask() {
               categorizeTask({ description: taskDesc }),
             ]);
     
-            const newTask: Task = {
-              id: `${new Date().getTime()}-${Math.random()}`,
+            const newTask: Omit<Task, 'id'> = {
               description: taskDesc,
               category: categoryResult?.category || 'Personal',
               type: predictionResult?.predictedTaskType || 'light',
@@ -59,8 +58,7 @@ export default function QuickAddTask() {
           personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
           categorizeTask({ description: taskDesc }),
         ]);
-        const newTask: Task = {
-          id: `${new Date().getTime()}`,
+        const newTask: Omit<Task, 'id'> = {
           description: taskDesc,
           category: categoryResult?.category || 'Personal',
           type: predictionResult?.predictedTaskType || 'light',
@@ -77,7 +75,6 @@ export default function QuickAddTask() {
       dispatch({
         type: 'ADD_TASK',
         payload: {
-          id: new Date().getTime().toString(),
           description: inputValue,
           category: 'Personal',
           type: 'light',

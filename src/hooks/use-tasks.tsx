@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useRef } from 'react';
 import type { Task, TaskCategory, TaskType, TaskDuration } from '@/lib/types';
 
 type State = {
@@ -8,8 +8,8 @@ type State = {
 };
 
 type Action =
-  | { type: 'ADD_TASK'; payload: Task }
-  | { type: 'ADD_MULTIPLE_TASKS'; payload: Task[] }
+  | { type: 'ADD_TASK'; payload: Omit<Task, 'id'> }
+  | { type: 'ADD_MULTIPLE_TASKS'; payload: Omit<Task, 'id'>[] }
   | { type: 'UPDATE_TASK'; payload: Task }
   | { type: 'DELETE_TASK'; payload: string }
   | { type: 'SET_COMPLETED'; payload: { id: string; isCompleted: boolean } };
@@ -23,17 +23,23 @@ const TasksContext = createContext<{
   dispatch: React.Dispatch<Action>;
 } | undefined>(undefined);
 
+let idCounter = 0;
+const generateId = () => {
+    return `task-${Date.now()}-${idCounter++}`;
+}
+
 function tasksReducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD_TASK':
       return {
         ...state,
-        tasks: [action.payload, ...state.tasks],
+        tasks: [{ ...action.payload, id: generateId() }, ...state.tasks],
       };
     case 'ADD_MULTIPLE_TASKS':
+      const newTasks = action.payload.map(task => ({ ...task, id: generateId() }));
       return {
         ...state,
-        tasks: [...action.payload, ...state.tasks],
+        tasks: [...newTasks, ...state.tasks],
       };
     case 'UPDATE_TASK':
       return {
