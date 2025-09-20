@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -22,13 +23,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTasks } from "@/hooks/use-tasks";
-import { TaskCategory, TaskDuration, TaskType, Task } from "@/lib/types";
+import {
+  TaskCategory,
+  TaskDuration,
+  TaskType,
+  Task,
+  allTaskCategories,
+  deepWorkCategories,
+  lightWorkCategories,
+  adminWorkCategories,
+} from "@/lib/types";
 import { categorizeTask, personalizeTaskPredictions } from "@/lib/actions";
 import { Loader2, Wand2 } from "lucide-react";
 
 const formSchema = z.object({
   description: z.string().min(3, "Description must be at least 3 characters."),
-  category: z.enum(['Work', 'Personal', 'Household', 'Errand', 'Other']),
+  category: z.enum(allTaskCategories),
   type: z.enum(['deep', 'light', 'admin']),
   duration: z.enum(['15-minute', '30-minute', '1-hour']),
 });
@@ -80,12 +90,19 @@ export function AddTaskForm({ setDialogOpen }: AddTaskFormProps) {
 
       if (categoryResult) {
         form.setValue("category", categoryResult.category);
+        if (deepWorkCategories.includes(categoryResult.category)) {
+          form.setValue("type", "deep");
+        } else if (lightWorkCategories.includes(categoryResult.category)) {
+          form.setValue("type", "light");
+        } else {
+          form.setValue("type", "admin");
+        }
       }
 
     } catch (error) {
       console.error("AI prediction failed:", error);
       // Fallback to some defaults if AI fails
-      form.setValue("category", "Personal");
+      form.setValue("category", "Communication");
       form.setValue("type", "light");
       form.setValue("duration", "30-minute");
     } finally {
@@ -127,7 +144,7 @@ export function AddTaskForm({ setDialogOpen }: AddTaskFormProps) {
           />
 
           { (form.watch("category") || isPredicting) &&
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="category"
@@ -141,31 +158,12 @@ export function AddTaskForm({ setDialogOpen }: AddTaskFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(['Work', 'Personal', 'Household', 'Errand', 'Other'] as TaskCategory[]).map(cat => 
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {(['deep', 'light', 'admin'] as TaskType[]).map(type => 
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      )}
+                      <FormLabel className="px-3 py-2 text-xs font-semibold">Deep Work</FormLabel>
+                      {deepWorkCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                      <FormLabel className="px-3 py-2 text-xs font-semibold">Light Work</FormLabel>
+                      {lightWorkCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                      <FormLabel className="px-3 py-2 text-xs font-semibold">Admin Work</FormLabel>
+                      {adminWorkCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FormMessage />

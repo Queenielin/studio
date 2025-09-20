@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Task } from "@/lib/types";
@@ -64,7 +65,7 @@ export default function TaskCard({ task }: TaskCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="outline" className="flex items-center gap-1.5">
-                    <TaskIcon category={task.category} className="h-3 w-3" />
+                    <TaskIcon type={task.type} className="h-3 w-3" />
                     {task.category}
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1.5">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef } from "react";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { categorizeTask, personalizeTaskPredictions } from "@/lib/actions";
-import { Task } from "@/lib/types";
+import { Task, deepWorkCategories, lightWorkCategories } from "@/lib/types";
 
 export default function QuickAddTask() {
   const [inputValue, setInputValue] = useState("");
@@ -26,11 +27,19 @@ export default function QuickAddTask() {
       personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
       categorizeTask({ description: taskDesc }),
     ]);
+    
+    let taskType: 'deep' | 'light' | 'admin' = predictionResult?.predictedTaskType || 'light';
+    if(categoryResult?.category) {
+        if(deepWorkCategories.includes(categoryResult.category)) taskType = 'deep';
+        else if (lightWorkCategories.includes(categoryResult.category)) taskType = 'light';
+        else taskType = 'admin';
+    }
+
 
     return {
       description: taskDesc,
-      category: categoryResult?.category || 'Personal',
-      type: predictionResult?.predictedTaskType || 'light',
+      category: categoryResult?.category || 'Communication',
+      type: taskType,
       duration: predictionResult?.predictedDuration || '30-minute',
       isCompleted: false,
     };
@@ -60,7 +69,7 @@ export default function QuickAddTask() {
       // Fallback: Add tasks without AI enrichment if processing fails.
       const tasks = trimmedInput.split('\n').filter(line => line.trim() !== '').map(desc => ({
           description: desc,
-          category: 'Personal',
+          category: 'Communication',
           type: 'light',
           duration: '30-minute',
           isCompleted: false,

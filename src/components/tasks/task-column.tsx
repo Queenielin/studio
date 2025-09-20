@@ -1,6 +1,7 @@
+
 "use client";
 
-import { Task, TaskCategory } from "@/lib/types";
+import { Task, TaskCategory, allTaskCategories } from "@/lib/types";
 import { TaskIcon } from "../icons";
 import TaskCard from "./task-card";
 
@@ -10,7 +11,7 @@ type TaskColumnProps = {
   tasks: Task[];
 };
 
-const categories: TaskCategory[] = ['Work', 'Personal', 'Household', 'Errand', 'Other'];
+const categories: TaskCategory[] = allTaskCategories;
 
 export default function TaskColumn({ title, icon, tasks }: TaskColumnProps) {
 
@@ -45,7 +46,7 @@ export default function TaskColumn({ title, icon, tasks }: TaskColumnProps) {
           return (
             <div key={category} className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground ml-1">
-                <TaskIcon category={category} className="h-3.5 w-3.5" />
+                <TaskIcon type={categoryTasks[0].type} className="h-3.5 w-3.5" />
                 <span>{category.toUpperCase()}</span>
               </div>
               <div className="flex flex-col gap-4">
