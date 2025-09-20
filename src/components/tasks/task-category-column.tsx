@@ -10,10 +10,10 @@ type TaskCategoryColumnProps = {
   icon: React.ReactNode;
   categories: TaskCategory[];
   tasks: Task[];
-  colorClass: string;
+  colorClasses: string[];
 };
 
-export default function TaskCategoryColumn({ title, icon, categories, tasks, colorClass }: TaskCategoryColumnProps) {
+export default function TaskCategoryColumn({ title, icon, categories, tasks, colorClasses }: TaskCategoryColumnProps) {
 
   return (
     <div className="flex flex-col gap-4">
@@ -26,12 +26,12 @@ export default function TaskCategoryColumn({ title, icon, categories, tasks, col
       </div>
 
       <div className="flex flex-col gap-4">
-        {categories.map(category => (
+        {categories.map((category, index) => (
             <TaskCategoryBox 
                 key={category} 
                 category={category} 
                 tasks={tasks.filter(t => t.category === category)} 
-                colorClass={colorClass}
+                colorClass={colorClasses[index % colorClasses.length]}
             />
         ))}
       </div>
