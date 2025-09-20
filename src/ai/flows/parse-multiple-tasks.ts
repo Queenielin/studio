@@ -29,10 +29,11 @@ const prompt = ai.definePrompt({
   name: 'parseMultipleTasksPrompt',
   input: {schema: ParseMultipleTasksInputSchema},
   output: {schema: ParseMultipleTasksOutputSchema},
-  prompt: `You are an expert at parsing user input into a list of tasks. The user might provide a single task or multiple tasks in one sentence, separated by commas, newlines, or conjunctions. Identify each distinct task and return it as an item in an array.
+  prompt: `You are an expert at parsing user input into a list of tasks. The user might provide a single task or multiple tasks in one sentence, separated by commas, newlines, or conjunctions. Each line should be treated as a separate task. Identify each distinct task and return it as an item in an array.
 
 For example, if the input is "Buy milk, walk the dog, and write the report", the output should be ["Buy milk", "walk the dog", "write the report"].
 If the input is "Prepare presentation", the output should be ["Prepare presentation"].
+If the input is "Order groceries\nPlan weekend trip", the output should be ["Order groceries", "Plan weekend trip"].
 
 User input: {{{text}}}
 `,
@@ -49,7 +50,7 @@ const parseMultipleTasksFlow = ai.defineFlow(
     // If only one task is identified, the model might not return it as an array.
     // Also if the model returns an empty list for some reason, just assume the input was the task.
     if (!output || !output.tasks || output.tasks.length === 0) {
-      return { tasks: [input.text] };
+      return { tasks: input.text.split('\n').filter(t => t.trim() !== '') };
     }
     return output;
   }
