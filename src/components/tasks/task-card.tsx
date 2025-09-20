@@ -68,10 +68,6 @@ export default function TaskCard({ task }: TaskCardProps) {
                     {task.category}
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1.5">
-                    <TaskIcon type={task.type} className="h-3 w-3" />
-                    {task.type}
-                </Badge>
-                <Badge variant="outline" className="flex items-center gap-1.5">
                     <TaskIcon duration={task.duration} className="h-3 w-3" />
                     {task.duration}
                 </Badge>
