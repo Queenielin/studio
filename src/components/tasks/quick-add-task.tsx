@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
-import { categorizeTask, personalizeTaskPredictions, parseMultipleTasks } from "@/lib/actions";
+import { categorizeTask, personalizeTaskPredictions } from "@/lib/actions";
 import { Task } from "@/lib/types";
 
 export default function QuickAddTask() {
@@ -21,6 +21,7 @@ export default function QuickAddTask() {
       duration: t.duration,
     }));
 
+    // Still use AI to enrich each individual task
     const [predictionResult, categoryResult] = await Promise.all([
       personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
       categorizeTask({ description: taskDesc }),
@@ -42,14 +43,13 @@ export default function QuickAddTask() {
     setIsAdding(true);
     
     try {
-      // Step 1: Always parse the input to get a list of task descriptions.
-      const { tasks: taskDescriptions } = await parseMultipleTasks({ text: trimmedInput });
+      // **FIX:** Removed faulty AI parser. Manually split by newlines.
+      const taskDescriptions = trimmedInput.split('\n').filter(line => line.trim() !== '');
 
-      // Step 2: Process each task description individually using AI.
+      // Process each description individually.
       const newTasksPromises = taskDescriptions.map(desc => processSingleTask(desc));
       const newTasks = await Promise.all(newTasksPromises);
 
-      // Step 3: Add all newly created tasks to the state.
       if (newTasks.length > 0) {
         dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       }
@@ -57,8 +57,8 @@ export default function QuickAddTask() {
       setInputValue("");
     } catch (error) {
       console.error("Failed to process and add tasks:", error);
-      // Fallback: Even if AI fails, try to add the tasks by splitting lines.
-      const tasks = trimmedInput.split('\n').map(desc => ({
+      // Fallback: Add tasks without AI enrichment if processing fails.
+      const tasks = trimmedInput.split('\n').filter(line => line.trim() !== '').map(desc => ({
           description: desc,
           category: 'Personal',
           type: 'light',
