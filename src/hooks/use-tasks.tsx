@@ -21,25 +21,22 @@ const initialState: State = {
 const TasksContext = createContext<{
   state: State;
   dispatch: React.Dispatch<Action>;
+  generateId: () => string;
 } | undefined>(undefined);
-
-let idCounter = 0;
-const generateId = () => {
-    return `task-${Date.now()}-${idCounter++}`;
-}
 
 function tasksReducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD_TASK':
+      // ID is now generated in the provider, not here directly
       return {
         ...state,
-        tasks: [{ ...action.payload, id: generateId() }, ...state.tasks],
+        tasks: [action.payload as Task, ...state.tasks],
       };
     case 'ADD_MULTIPLE_TASKS':
-      const newTasks = action.payload.map(task => ({ ...task, id: generateId() }));
+      // IDs are now generated in the provider
       return {
         ...state,
-        tasks: [...newTasks, ...state.tasks],
+        tasks: [...(action.payload as Task[]), ...state.tasks],
       };
     case 'UPDATE_TASK':
       return {
@@ -69,9 +66,29 @@ function tasksReducer(state: State, action: Action): State {
 
 export function TasksProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(tasksReducer, initialState);
+  const idCounter = useRef(0);
+
+  const generateId = () => {
+    const newId = `task-${idCounter.current++}`;
+    return newId;
+  };
+  
+  const enhancedDispatch = (action: Action) => {
+    if (action.type === 'ADD_TASK') {
+        const newTask = { ...action.payload, id: generateId() };
+        dispatch({ type: 'ADD_TASK', payload: newTask });
+    } else if (action.type === 'ADD_MULTIPLE_TASKS') {
+        const newTasks = action.payload.map(task => ({ ...task, id: generateId() }));
+        dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
+    }
+    else {
+        dispatch(action);
+    }
+  };
+
 
   return (
-    <TasksContext.Provider value={{ state, dispatch }}>
+    <TasksContext.Provider value={{ state, dispatch: enhancedDispatch }}>
       {children}
     </TasksContext.Provider>
   );

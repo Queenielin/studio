@@ -20,7 +20,7 @@ export default function AppHeader() {
         <div className="ml-auto">
           <Button onClick={() => setAddTaskOpen(true)} size={isMobile ? "icon" : "default"}>
             <PlusCircle className="h-4 w-4" />
-            {!isMobile && <span className="ml-2">Add Task</span>}
+            {isMobile ? null : <span className="ml-2">Add Task</span>}
           </Button>
         </div>
       </header>
