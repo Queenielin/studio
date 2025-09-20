@@ -46,12 +46,17 @@ const parseMultipleTasksFlow = ai.defineFlow(
     outputSchema: ParseMultipleTasksOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    // If only one task is identified, the model might not return it as an array.
-    // Also if the model returns an empty list for some reason, just assume the input was the task.
-    if (!output || !output.tasks || output.tasks.length === 0) {
-      return { tasks: input.text.split('\n').filter(t => t.trim() !== '') };
+    try {
+      const {output} = await prompt(input);
+      // If the model returns an empty list or fails for any reason, use the fallback.
+      if (!output || !output.tasks || output.tasks.length === 0) {
+        throw new Error("AI returned no tasks, using fallback.");
+      }
+      return output;
+    } catch (e) {
+      // Fallback: manually split by newlines. This is a robust failsafe.
+      const tasks = input.text.split('\n').map(t => t.trim()).filter(t => t !== '');
+      return { tasks };
     }
-    return output;
   }
 );
