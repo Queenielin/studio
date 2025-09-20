@@ -555,12 +555,11 @@ const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button"
     const { isMobile, state } = useSidebar()
-    const [isMounted, setIsMounted] = React.useState(false);
+    const [mounted, setMounted] = React.useState(false)
 
     React.useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
+      setMounted(true)
+    }, [])
 
     const button = (
       <Comp
@@ -573,7 +572,7 @@ const SidebarMenuButton = React.forwardRef<
       />
     )
 
-    if (!isMounted || !tooltip) {
+    if (!mounted || !tooltip) {
       return button
     }
     
