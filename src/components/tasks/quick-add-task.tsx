@@ -14,75 +14,64 @@ export default function QuickAddTask() {
   const [isAdding, setIsAdding] = useState(false);
   const { state, dispatch } = useTasks();
 
+  const processSingleTask = async (taskDesc: string): Promise<Omit<Task, 'id'>> => {
+    const historicalData = state.tasks.map((t) => ({
+      taskDescription: t.description,
+      taskType: t.type,
+      duration: t.duration,
+    }));
+
+    const [predictionResult, categoryResult] = await Promise.all([
+      personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
+      categorizeTask({ description: taskDesc }),
+    ]);
+
+    return {
+      description: taskDesc,
+      category: categoryResult?.category || 'Personal',
+      type: predictionResult?.predictedTaskType || 'light',
+      duration: predictionResult?.predictedDuration || '30-minute',
+      isCompleted: false,
+    };
+  };
+
   const handleAddTask = async () => {
-    if (!inputValue.trim()) return;
+    const trimmedInput = inputValue.trim();
+    if (!trimmedInput) return;
 
     setIsAdding(true);
-    try {
-      const { tasks: parsedTasks } = await parseMultipleTasks({ text: inputValue });
+    let taskDescriptions: string[] = [];
 
+    try {
+      // Step 1: Parse the input into a list of task descriptions
+      const { tasks: parsedTasks } = await parseMultipleTasks({ text: trimmedInput });
+      
       if (parsedTasks && parsedTasks.length > 0) {
-        const newTasks = await Promise.all(
-          parsedTasks.map(async (taskDesc, index) => {
-            const historicalData = state.tasks.map((t) => ({
-              taskDescription: t.description,
-              taskType: t.type,
-              duration: t.duration,
-            }));
-    
-            const [predictionResult, categoryResult] = await Promise.all([
-              personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
-              categorizeTask({ description: taskDesc }),
-            ]);
-    
-            const newTask: Omit<Task, 'id'> = {
-              description: taskDesc,
-              category: categoryResult?.category || 'Personal',
-              type: predictionResult?.predictedTaskType || 'light',
-              duration: predictionResult?.predictedDuration || '30-minute',
-              isCompleted: false,
-            };
-            return newTask;
-          })
-        );
-        dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
+        taskDescriptions = parsedTasks;
       } else {
-        // Fallback for single task if parsing fails
-        const taskDesc = inputValue;
-        const historicalData = state.tasks.map((t) => ({
-          taskDescription: t.description,
-          taskType: t.type,
-          duration: t.duration,
-        }));
-        const [predictionResult, categoryResult] = await Promise.all([
-          personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
-          categorizeTask({ description: taskDesc }),
-        ]);
-        const newTask: Omit<Task, 'id'> = {
-          description: taskDesc,
-          category: categoryResult?.category || 'Personal',
-          type: predictionResult?.predictedTaskType || 'light',
-          duration: predictionResult?.predictedDuration || '30-minute',
-          isCompleted: false,
-        };
-        dispatch({ type: 'ADD_TASK', payload: newTask });
+        // Fallback if AI returns empty/no tasks: split by newline
+        throw new Error("AI parsing returned no tasks, using fallback.");
+      }
+    } catch (error) {
+      console.error("AI parsing failed, using manual fallback:", error);
+      // Bulletproof fallback: split by newlines and filter out empty lines.
+      taskDescriptions = trimmedInput.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    }
+
+    try {
+      // Step 2: Process each task description individually
+      const newTasksPromises = taskDescriptions.map(desc => processSingleTask(desc));
+      const newTasks = await Promise.all(newTasksPromises);
+
+      // Step 3: Add all newly created tasks to the state
+      if (newTasks.length > 0) {
+        dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       }
 
       setInputValue("");
     } catch (error) {
-      console.error("Failed to add task(s):", error);
-      // Basic fallback: add the raw input as a single task
-      dispatch({
-        type: 'ADD_TASK',
-        payload: {
-          description: inputValue,
-          category: 'Personal',
-          type: 'light',
-          duration: '30-minute',
-          isCompleted: false,
-        }
-      });
-      setInputValue("");
+      console.error("Failed to process and add tasks:", error);
+      // You can add a toast notification here to inform the user of the failure.
     } finally {
       setIsAdding(false);
     }
@@ -105,11 +94,10 @@ export default function QuickAddTask() {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isAdding}
-          className="pl-10 pr-24 resize-none"
-          rows={1}
+          className="pl-10 pr-24"
         />
-        <Button onClick={handleAddTask} disabled={isAdding || !inputValue.trim()} className="absolute right-1 top-1.5 h-8">
-          {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <span>Add</span>}
+        <Button onClick={handleAddTask} disabled={isAdding || !inputValue.trim()} className="absolute right-1.5 top-1.5 h-auto py-1.5 px-3 text-xs">
+          {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <span>Add Task(s)</span>}
         </Button>
       </div>
     </div>
