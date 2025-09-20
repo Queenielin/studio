@@ -35,7 +35,7 @@ export default function TaskCard({ task }: TaskCardProps) {
 
   return (
     <Card className={cn("flex flex-col h-full transition-all hover:shadow-md", task.isCompleted && "bg-muted/50")}>
-      <CardHeader className="flex flex-row items-start justify-between gap-4 pb-4">
+      <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2 pt-4 px-4">
         <div className="flex items-start gap-3">
           <Checkbox 
             id={`task-${task.id}`} 
@@ -43,13 +43,13 @@ export default function TaskCard({ task }: TaskCardProps) {
             onCheckedChange={handleCheckedChange}
             className="mt-1"
           />
-          <label htmlFor={`task-${task.id}`} className={cn("font-semibold leading-snug", task.isCompleted && "line-through text-muted-foreground")}>
+          <label htmlFor={`task-${task.id}`} className={cn("font-semibold leading-snug text-sm", task.isCompleted && "line-through text-muted-foreground")}>
             {task.description}
           </label>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -61,14 +61,10 @@ export default function TaskCard({ task }: TaskCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent className="flex-grow flex flex-col justify-end">
+      <CardContent className="flex-grow flex flex-col justify-end px-4 pb-3">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="outline" className="flex items-center gap-1.5">
-                    <TaskIcon type={task.type} className="h-3 w-3" />
-                    {task.category}
-                </Badge>
-                <Badge variant="outline" className="flex items-center gap-1.5">
+                <Badge variant="outline" className="flex items-center gap-1.5 font-normal">
                     <TaskIcon duration={task.duration} className="h-3 w-3" />
                     {task.duration}
                 </Badge>

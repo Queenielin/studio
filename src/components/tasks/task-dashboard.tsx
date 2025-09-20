@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useTasks } from "@/hooks/use-tasks";
-import { Task, TaskCategory, TaskType } from "@/lib/types";
-import TaskColumn from "./task-column";
+import { TaskType, deepWorkCategories, lightWorkCategories, adminWorkCategories, TaskCategory } from "@/lib/types";
 import QuickAddTask from "./quick-add-task";
 import { BrainCircuit, Feather, FileText, Users } from "lucide-react";
 import TaskList from "./task-list";
@@ -10,13 +9,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { GroupTasksDialog } from "./group-tasks-dialog";
+import TaskCategoryColumn from "./task-category-column";
 
-const taskTypes: TaskType[] = ['deep', 'light', 'admin'];
-
-const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode }> = {
-  deep: { title: "Deep Work", icon: <BrainCircuit className="h-5 w-5" /> },
-  light: { title: "Light Work", icon: <Feather className="h-5 w-5" /> },
-  admin: { title: "Admin", icon: <FileText className="h-5 w-5" /> },
+const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, categories: TaskCategory[], colorClass: string }> = {
+  deep: { 
+    title: "Deep Work", 
+    icon: <BrainCircuit className="h-5 w-5" />, 
+    categories: deepWorkCategories,
+    colorClass: "bg-blue-100/30 border-blue-200/50"
+  },
+  light: { 
+    title: "Light Work", 
+    icon: <Feather className="h-5 w-5" />,
+    categories: lightWorkCategories,
+    colorClass: "bg-green-100/30 border-green-200/50"
+  },
+  admin: { 
+    title: "Admin", 
+    icon: <FileText className="h-5 w-5" />,
+    categories: adminWorkCategories,
+    colorClass: "bg-yellow-100/30 border-yellow-200/50"
+  },
 };
 
 
@@ -27,8 +40,6 @@ export default function TaskDashboard() {
 
   const todoTasks = tasks.filter(task => !task.isCompleted);
   const completedTasks = tasks.filter(task => task.isCompleted);
-
-  const getTasksByType = (type: TaskType) => todoTasks.filter(task => task.type === type);
 
   return (
     <div className="flex flex-col gap-8">
@@ -46,13 +57,16 @@ export default function TaskDashboard() {
             </Button>
         </div>
         <TabsContent value="board">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {taskTypes.map(type => (
-              <TaskColumn
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+            {(Object.keys(typeDisplay) as TaskType[]).map(type => (
+              <TaskCategoryColumn
                 key={type}
+                taskType={type}
                 title={typeDisplay[type].title}
                 icon={typeDisplay[type].icon}
-                tasks={getTasksByType(type)}
+                categories={typeDisplay[type].categories}
+                tasks={todoTasks.filter(task => task.type === type)}
+                colorClass={typeDisplay[type].colorClass}
               />
             ))}
           </div>
