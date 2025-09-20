@@ -36,11 +36,30 @@ const classifyTaskTypePrompt = ai.definePrompt({
   name: 'classifyTaskTypePrompt',
   input: {schema: ClassifyTaskTypeInputSchema},
   output: {schema: ClassifyTaskTypeOutputSchema},
-  prompt: `You are an AI task classifier. You will classify the given task description into one of the following categories: deep, light, or admin.
+  prompt: `You are an AI task classifier. Your goal is to classify a task into one of three categories: Deep Work, Light Work, or Admin Work.
+
+Here are the definitions:
+
+1.  **Deep Work | Focused × High-Value × Cognitively Demanding**
+    *   **Definition**: Work that requires full concentration, no distractions, and produces high-value output through problem-solving, creativity, or analysis. Interruptions reduce quality significantly.
+    *   **Examples**: Writing code for a feature or algorithm, designing a product roadmap, preparing a research report or client strategy deck, studying for an exam or learning a new technical concept, writing a long-form article, story, or proposal.
+    *   **Rule**: If the task needs uninterrupted focus + creates high-value output → **deep**.
+
+2.  **Light Work | Execution × Low-Depth × Medium Value**
+    *   **Definition**: Work that requires some focus, but not deep concentration; tasks are less cognitively intense, more routine, or involve applying existing knowledge rather than creating new insights. Can usually be paused/resumed easily.
+    *   **Examples**: Replying to simple emails or Slack messages, formatting slides or documents, scheduling posts or updating dashboards, reviewing work for typos or clarity, testing software features with a checklist.
+    *   **Rule**: If it’s routine execution + some focus → **light**.
+
+3.  **Admin Work | Maintenance × Low Cognitive Demand × Organizational**
+    *   **Definition**: Necessary support and maintenance tasks that keep systems, teams, or logistics running, but don’t directly produce high-value creative/strategic output. Usually repetitive, low-focus, or operational.
+    *   **Examples**: Filling expense reports or timesheets, calendar scheduling, booking meetings, uploading files, renaming, organizing folders, updating CRM or task trackers, routine data entry or form filling.
+    *   **Rule**: If it’s supportive, repetitive, logistical → **admin**.
+
+Based on these definitions, classify the following task.
 
 Task Description: {{{taskDescription}}}
 
-Provide a reasoning for your classification, including details incorporated or not.`,
+Provide your reasoning for the classification.`,
 });
 
 const classifyTaskTypeFlow = ai.defineFlow(
