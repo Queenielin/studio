@@ -27,8 +27,3 @@ export async function decomposeLargeTask(input: DecomposeLargeTaskInput): Promis
 export async function personalizeTaskPredictions(input: PersonalizeTaskPredictionsInput): Promise<PersonalizeTaskPredictionsOutput> {
   return await personalizeTaskPredictionsFlow(input);
 }
-
-// This function is no longer used by the application.
-// export async function parseMultipleTasks(input: ParseMultipleTasksInput): Promise<ParseMultipleTasksOutput> {
-//     return await parseMultipleTasksFlow(input);
-// }
