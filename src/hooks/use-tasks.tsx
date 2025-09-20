@@ -15,14 +15,7 @@ type Action =
   | { type: 'SET_COMPLETED'; payload: { id: string; isCompleted: boolean } };
 
 const initialState: State = {
-  tasks: [
-    { id: '1', description: 'Plan Q3 marketing campaign', category: 'Work', type: 'deep', duration: '1-hour', isCompleted: false },
-    { id: '2', description: 'Review and approve team expenses', category: 'Work', type: 'admin', duration: '30-minute', isCompleted: false },
-    { id: '3', description: 'Book dentist appointment', category: 'Personal', type: 'admin', duration: '15-minute', isCompleted: true },
-    { id: '4', description: 'Brainstorm ideas for new blog post', category: 'Personal', type: 'light', duration: '30-minute', isCompleted: false },
-    { id: '5', description: 'Buy groceries for the week', category: 'Household', type: 'light', duration: '1-hour', isCompleted: false },
-    { id: '6', description: 'Pick up dry cleaning', category: 'Errand', type: 'admin', duration: '15-minute', isCompleted: false },
-  ],
+  tasks: [],
 };
 
 const TasksContext = createContext<{
