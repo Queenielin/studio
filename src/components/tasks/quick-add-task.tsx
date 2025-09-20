@@ -53,7 +53,6 @@ export default function QuickAddTask() {
         dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       }
 
-      setInputValue("");
     } catch (error) {
       console.error("Failed to process and add tasks:", error);
       // Fallback: Add tasks without AI enrichment if processing fails.
@@ -65,7 +64,6 @@ export default function QuickAddTask() {
           isCompleted: false,
       } as Omit<Task, 'id'>));
       dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: tasks });
-      setInputValue("");
     } finally {
       setIsAdding(false);
     }
