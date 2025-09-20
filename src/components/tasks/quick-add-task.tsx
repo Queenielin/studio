@@ -40,30 +40,16 @@ export default function QuickAddTask() {
     if (!trimmedInput) return;
 
     setIsAdding(true);
-    let taskDescriptions: string[] = [];
-
+    
     try {
-      // Step 1: Parse the input into a list of task descriptions
-      const { tasks: parsedTasks } = await parseMultipleTasks({ text: trimmedInput });
-      
-      if (parsedTasks && parsedTasks.length > 0) {
-        taskDescriptions = parsedTasks;
-      } else {
-        // Fallback if AI returns empty/no tasks: split by newline
-        throw new Error("AI parsing returned no tasks, using fallback.");
-      }
-    } catch (error) {
-      console.error("AI parsing failed, using manual fallback:", error);
-      // Bulletproof fallback: split by newlines and filter out empty lines.
-      taskDescriptions = trimmedInput.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    }
+      // Step 1: Always parse the input to get a list of task descriptions.
+      const { tasks: taskDescriptions } = await parseMultipleTasks({ text: trimmedInput });
 
-    try {
-      // Step 2: Process each task description individually
+      // Step 2: Process each task description individually using AI.
       const newTasksPromises = taskDescriptions.map(desc => processSingleTask(desc));
       const newTasks = await Promise.all(newTasksPromises);
 
-      // Step 3: Add all newly created tasks to the state
+      // Step 3: Add all newly created tasks to the state.
       if (newTasks.length > 0) {
         dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       }
@@ -71,7 +57,16 @@ export default function QuickAddTask() {
       setInputValue("");
     } catch (error) {
       console.error("Failed to process and add tasks:", error);
-      // You can add a toast notification here to inform the user of the failure.
+      // Fallback: Even if AI fails, try to add the tasks by splitting lines.
+      const tasks = trimmedInput.split('\n').map(desc => ({
+          description: desc,
+          category: 'Personal',
+          type: 'light',
+          duration: '30-minute',
+          isCompleted: false,
+      } as Omit<Task, 'id'>));
+      dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: tasks });
+      setInputValue("");
     } finally {
       setIsAdding(false);
     }
