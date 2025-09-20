@@ -17,10 +17,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <BrainCircuit className="h-5 w-5" />, 
     categories: deepWorkCategories,
     colorClasses: [
-      "bg-blue-100/40 border-blue-200/60",
       "bg-blue-100/60 border-blue-200/80",
-      "bg-blue-100/80 border-blue-300/80",
-      "bg-blue-200/50 border-blue-300",
+      "bg-sky-100/60 border-sky-200/80",
+      "bg-indigo-100/60 border-indigo-200/80",
+      "bg-violet-100/60 border-violet-200/80",
     ]
   },
   light: { 
@@ -28,10 +28,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <Feather className="h-5 w-5" />,
     categories: lightWorkCategories,
     colorClasses: [
-        "bg-green-100/40 border-green-200/60",
-        "bg-green-100/60 border-green-200/80",
-        "bg-green-100/80 border-green-300/80",
-        "bg-green-200/50 border-green-300",
+        "bg-orange-100/60 border-orange-200/80",
+        "bg-amber-100/60 border-amber-200/80",
+        "bg-lime-100/60 border-lime-200/80",
+        "bg-yellow-100/60 border-yellow-200/80",
     ]
   },
   admin: { 
@@ -39,10 +39,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <FileText className="h-5 w-5" />,
     categories: adminWorkCategories,
     colorClasses: [
-        "bg-yellow-100/40 border-yellow-200/60",
-        "bg-yellow-100/60 border-yellow-200/80",
-        "bg-yellow-100/80 border-yellow-300/80",
-        "bg-yellow-200/50 border-yellow-300",
+        "bg-green-100/60 border-green-200/80",
+        "bg-teal-100/60 border-teal-200/80",
+        "bg-emerald-100/60 border-emerald-200/80",
+        "bg-cyan-100/60 border-cyan-200/80",
     ]
   },
 };
