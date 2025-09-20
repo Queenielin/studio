@@ -1,3 +1,4 @@
+
 "use client";
 import { useState } from "react";
 import { useTasks } from "@/hooks/use-tasks";
@@ -17,10 +18,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <BrainCircuit className="h-5 w-5" />, 
     categories: deepWorkCategories,
     colorClasses: [
-      "bg-blue-100/60 border-blue-200/80",
-      "bg-sky-100/60 border-sky-200/80",
-      "bg-indigo-100/60 border-indigo-200/80",
-      "bg-violet-100/60 border-violet-200/80",
+      "bg-blue-200 border-blue-300",
+      "bg-sky-200 border-sky-300",
+      "bg-indigo-200 border-indigo-300",
+      "bg-violet-200 border-violet-300",
     ]
   },
   light: { 
@@ -28,10 +29,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <Feather className="h-5 w-5" />,
     categories: lightWorkCategories,
     colorClasses: [
-        "bg-orange-100/60 border-orange-200/80",
-        "bg-amber-100/60 border-amber-200/80",
-        "bg-lime-100/60 border-lime-200/80",
-        "bg-yellow-100/60 border-yellow-200/80",
+      "bg-orange-200 border-orange-300",
+      "bg-amber-200 border-amber-300",
+      "bg-yellow-200 border-yellow-300",
+      "bg-lime-200 border-lime-300",
     ]
   },
   admin: { 
@@ -39,10 +40,10 @@ const typeDisplay: Record<TaskType, { title: string; icon: React.ReactNode, cate
     icon: <FileText className="h-5 w-5" />,
     categories: adminWorkCategories,
     colorClasses: [
-        "bg-green-100/60 border-green-200/80",
-        "bg-teal-100/60 border-teal-200/80",
-        "bg-emerald-100/60 border-emerald-200/80",
-        "bg-cyan-100/60 border-cyan-200/80",
+      "bg-green-200 border-green-300",
+      "bg-teal-200 border-teal-300",
+      "bg-emerald-200 border-emerald-300",
+      "bg-cyan-200 border-cyan-300",
     ]
   },
 };
