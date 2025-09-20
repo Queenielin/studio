@@ -573,14 +573,10 @@ const SidebarMenuButton = React.forwardRef<
       />
     )
 
-    if (!tooltip) {
+    if (!tooltip || !isMounted) {
       return button
     }
     
-    if (!isMounted) {
-      return button;
-    }
-
     if (typeof tooltip === "string") {
       tooltip = {
         children: tooltip,
