@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { categorizeTask, personalizeTaskPredictions, parseMultipleTasks } from "@/lib/actions";
+import { Task } from "@/lib/types";
 
 export default function QuickAddTask() {
   const [inputValue, setInputValue] = useState("");
@@ -19,30 +20,56 @@ export default function QuickAddTask() {
     setIsAdding(true);
     try {
       const { tasks: parsedTasks } = await parseMultipleTasks({ text: inputValue });
-      
-      const newTasks = await Promise.all(parsedTasks.map(async (taskDesc) => {
-        const historicalData = state.tasks.map(t => ({
+
+      if (parsedTasks && parsedTasks.length > 0) {
+        const newTasks = await Promise.all(
+          parsedTasks.map(async (taskDesc) => {
+            const historicalData = state.tasks.map((t) => ({
+              taskDescription: t.description,
+              taskType: t.type,
+              duration: t.duration,
+            }));
+    
+            const [predictionResult, categoryResult] = await Promise.all([
+              personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
+              categorizeTask({ description: taskDesc }),
+            ]);
+    
+            const newTask: Task = {
+              id: `${new Date().getTime()}-${Math.random()}`,
+              description: taskDesc,
+              category: categoryResult?.category || 'Personal',
+              type: predictionResult?.predictedTaskType || 'light',
+              duration: predictionResult?.predictedDuration || '30-minute',
+              isCompleted: false,
+            };
+            return newTask;
+          })
+        );
+        dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
+      } else {
+        // Fallback for single task if parsing fails
+        const taskDesc = inputValue;
+        const historicalData = state.tasks.map((t) => ({
           taskDescription: t.description,
           taskType: t.type,
           duration: t.duration,
         }));
-
         const [predictionResult, categoryResult] = await Promise.all([
           personalizeTaskPredictions({ newTaskDescription: taskDesc, historicalData }),
           categorizeTask({ description: taskDesc }),
         ]);
-
-        return {
-          id: new Date().getTime().toString() + Math.random(),
+        const newTask: Task = {
+          id: `${new Date().getTime()}`,
           description: taskDesc,
           category: categoryResult?.category || 'Personal',
           type: predictionResult?.predictedTaskType || 'light',
           duration: predictionResult?.predictedDuration || '30-minute',
           isCompleted: false,
         };
-      }));
+        dispatch({ type: 'ADD_TASK', payload: newTask });
+      }
 
-      dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       setInputValue("");
     } catch (error) {
       console.error("Failed to add task(s):", error);
