@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
@@ -12,6 +12,7 @@ export default function QuickAddTask() {
   const [inputValue, setInputValue] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const { state, dispatch } = useTasks();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const processSingleTask = async (taskDesc: string): Promise<Omit<Task, 'id'>> => {
     const historicalData = state.tasks.map((t) => ({
@@ -42,7 +43,6 @@ export default function QuickAddTask() {
     setIsAdding(true);
     
     try {
-      // **THE FIX**: Removed faulty AI parser. Manually split by newlines. No exceptions.
       const taskDescriptions = trimmedInput.split('\n').filter(line => line.trim() !== '');
 
       // Process each description individually.
@@ -66,6 +66,8 @@ export default function QuickAddTask() {
       dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: tasks });
     } finally {
       setIsAdding(false);
+      // Refocus the textarea
+      textareaRef.current?.focus();
     }
   };
 
@@ -81,6 +83,7 @@ export default function QuickAddTask() {
       <div className="flex w-full items-center space-x-2">
         <Sparkles className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
         <Textarea
+          ref={textareaRef}
           placeholder="Type one or more tasks (one per line)... then press Ctrl+Enter to add."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
