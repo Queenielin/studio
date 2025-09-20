@@ -52,6 +52,8 @@ export default function QuickAddTask() {
       if (newTasks.length > 0) {
         dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: newTasks });
       }
+      
+      setInputValue(""); // Clear the input after adding
 
     } catch (error) {
       console.error("Failed to process and add tasks:", error);
@@ -64,6 +66,7 @@ export default function QuickAddTask() {
           isCompleted: false,
       } as Omit<Task, 'id'>));
       dispatch({ type: 'ADD_MULTIPLE_TASKS', payload: tasks });
+      setInputValue(""); // Also clear on error
     } finally {
       setIsAdding(false);
       // Refocus the textarea
