@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskList from "./task-list";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
+import QuickAddTask from "./quick-add-task";
 
 export default function TaskDashboard() {
   const { state } = useTasks();
@@ -14,6 +15,7 @@ export default function TaskDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+      <QuickAddTask />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

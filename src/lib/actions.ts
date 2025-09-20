@@ -4,10 +4,14 @@ import { categorizeTask as categorizeTaskFlow } from "@/ai/flows/categorize-task
 import { classifyTaskType as classifyTaskTypeFlow } from "@/ai/flows/classify-task-type";
 import { decomposeLargeTask as decomposeLargeTaskFlow } from "@/ai/flows/decompose-large-task";
 import { personalizeTaskPredictions as personalizeTaskPredictionsFlow } from "@/ai/flows/personalize-task-predictions";
+import { parseMultipleTasks as parseMultipleTasksFlow } from "@/ai/flows/parse-multiple-tasks";
+
 import type { CategorizeTaskInput, CategorizeTaskOutput } from "@/ai/flows/categorize-task";
 import type { ClassifyTaskTypeInput, ClassifyTaskTypeOutput } from "@/ai/flows/classify-task-type";
 import type { DecomposeLargeTaskInput, DecomposeLargeTaskOutput } from "@/ai/flows/decompose-large-task";
 import type { PersonalizeTaskPredictionsInput, PersonalizeTaskPredictionsOutput } from "@/ai/flows/personalize-task-predictions";
+import type { ParseMultipleTasksInput, ParseMultipleTasksOutput } from "@/ai/flows/parse-multiple-tasks";
+
 
 export async function categorizeTask(input: CategorizeTaskInput): Promise<CategorizeTaskOutput> {
   return await categorizeTaskFlow(input);
@@ -23,4 +27,8 @@ export async function decomposeLargeTask(input: DecomposeLargeTaskInput): Promis
 
 export async function personalizeTaskPredictions(input: PersonalizeTaskPredictionsInput): Promise<PersonalizeTaskPredictionsOutput> {
   return await personalizeTaskPredictionsFlow(input);
+}
+
+export async function parseMultipleTasks(input: ParseMultipleTasksInput): Promise<ParseMultipleTasksOutput> {
+    return await parseMultipleTasksFlow(input);
 }

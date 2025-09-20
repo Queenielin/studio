@@ -9,6 +9,7 @@ type State = {
 
 type Action =
   | { type: 'ADD_TASK'; payload: Task }
+  | { type: 'ADD_MULTIPLE_TASKS'; payload: Task[] }
   | { type: 'UPDATE_TASK'; payload: Task }
   | { type: 'DELETE_TASK'; payload: string }
   | { type: 'SET_COMPLETED'; payload: { id: string; isCompleted: boolean } };
@@ -35,6 +36,11 @@ function tasksReducer(state: State, action: Action): State {
       return {
         ...state,
         tasks: [action.payload, ...state.tasks],
+      };
+    case 'ADD_MULTIPLE_TASKS':
+      return {
+        ...state,
+        tasks: [...action.payload, ...state.tasks],
       };
     case 'UPDATE_TASK':
       return {
