@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
@@ -88,8 +88,8 @@ export default function QuickAddTask() {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
       event.preventDefault();
       handleAddTask();
     }
@@ -98,18 +98,18 @@ export default function QuickAddTask() {
   return (
     <div className="relative">
       <div className="flex w-full items-center space-x-2">
-        <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Type a new task... or multiple. AI will handle it."
+        <Sparkles className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+        <Textarea
+          placeholder="Type one or more tasks (one per line)... then press Ctrl+Enter to add."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isAdding}
-          className="pl-10 pr-24"
+          className="pl-10 pr-24 resize-none"
+          rows={1}
         />
-        <Button onClick={handleAddTask} disabled={isAdding || !inputValue.trim()} className="absolute right-1 top-1/2 -translate-y-1/2 h-8">
-          {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <span>Add Task</span>}
+        <Button onClick={handleAddTask} disabled={isAdding || !inputValue.trim()} className="absolute right-1 top-1.5 h-8">
+          {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <span>Add</span>}
         </Button>
       </div>
     </div>
