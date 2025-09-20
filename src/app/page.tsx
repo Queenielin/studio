@@ -1,3 +1,10 @@
+import AppLayout from '@/components/layout/app-layout';
+import TaskDashboard from '@/components/tasks/task-dashboard';
+
 export default function Home() {
-  return <></>;
+  return (
+    <AppLayout>
+      <TaskDashboard />
+    </AppLayout>
+  );
 }
