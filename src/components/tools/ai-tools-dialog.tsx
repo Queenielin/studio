@@ -12,7 +12,7 @@ import {
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { classifyTaskType, decomposeLargeTask } from '@/lib/actions';
-import { Loader2 } from 'lucide-radix';
+import { Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 
